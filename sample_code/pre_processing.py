@@ -11,12 +11,12 @@ def main():
 
     img = cv2.imread(args["image"])
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite("imgs/pre_processing_3.png", gray)
-    exit(0)
 
     rectKern = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 5))
     blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, rectKern)
     cv2.imshow("Blackhat", blackhat)
+    cv2.imwrite("imgs/pre_processing_4.png", blackhat)
+    exit(0)
 
     squareKern = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     light = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, squareKern)
