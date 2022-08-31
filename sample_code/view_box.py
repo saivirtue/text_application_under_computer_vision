@@ -2,6 +2,7 @@ import argparse
 
 import cv2
 import numpy as np
+from imutils import paths
 from matplotlib import font_manager
 from paddleocr import PaddleOCR
 from PIL import Image, ImageDraw, ImageFont
@@ -36,7 +37,39 @@ def main():
 
     # 根據輸入的圖片與語言開始辨識
     ocr = PaddleOCR(lang=args["lang"])
+    if not args["image"].endswith("jpg"):
+        img_path_list = paths.list_images(args["image"])
+        for img_path in img_path_list:
+            results = ocr.ocr(img=img_path)
+            print(img_path)
+
+            output_img = cv2.imread(img_path)
+            copy_img = output_img.copy()
+            # 依次處理辨識結果
+            for result in results:
+                box = np.array(result[0]).astype(np.int64)
+                text = result[1][0]
+                score = result[1][1]
+
+                color = np.random.randint(0, high=256, size=(3,)).tolist()
+                cv2.fillPoly(copy_img, [box], color)
+                if args["lang"] == "en":
+                    cv2.putText(
+                        copy_img,
+                        f"{text}({round(score, 2)})",
+                        (box[1][0], box[1][1]),
+                        cv2.FONT_HERSHEY_PLAIN,
+                        1.1,
+                        (0, 255, 0),
+                    )
+                else:
+                    copy_img = paint_text(copy_img, f"{text}({round(score, 2)})", (box[1][0], box[1][1]), (0, 255, 0))
+            final = cv2.addWeighted(copy_img, ALPHA, output_img, 1 - ALPHA, 0)
+            cv2.imshow("final result", final)
+            cv2.waitKey(0)
+        exit(0)
     results = ocr.ocr(img=args["image"])
+    print(results)
 
     output_img = cv2.imread(args["image"])
     copy_img = output_img.copy()
