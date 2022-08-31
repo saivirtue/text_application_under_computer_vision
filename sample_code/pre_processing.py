@@ -12,10 +12,11 @@ def main():
     img = cv2.imread(args["image"])
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    rectKern = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 5))
-    blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, rectKern)
+    licenseKern = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 1))
+    blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, licenseKern)
     cv2.imshow("Blackhat", blackhat)
-    cv2.imwrite("imgs/pre_processing_4.png", blackhat)
+    cv2.imwrite("imgs/pre_processing_4_c.png", blackhat)
+    cv2.IMREAD
     exit(0)
 
     squareKern = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
@@ -31,7 +32,7 @@ def main():
     cv2.imshow("Scharr", gradX)
 
     gradX = cv2.GaussianBlur(gradX, (13, 13), 0)
-    gradX = cv2.morphologyEx(gradX, cv2.MORPH_CLOSE, rectKern)
+    gradX = cv2.morphologyEx(gradX, cv2.MORPH_CLOSE, licenseKern)
     thresh = cv2.threshold(gradX, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
     cv2.imshow("Grad Thresh", thresh)
 
