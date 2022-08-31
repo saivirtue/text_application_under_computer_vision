@@ -11,6 +11,8 @@ def main():
 
     img = cv2.imread(args["image"])
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    cv2.imwrite("imgs/pre_processing_3.png", gray)
+    exit(0)
 
     rectKern = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 5))
     blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, rectKern)
