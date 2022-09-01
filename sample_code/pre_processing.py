@@ -16,16 +16,16 @@ def main():
     blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, licenseKern)
     cv2.imshow("Blackhat", blackhat)
 
-    squareKern = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    light = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, squareKern)
-    light = cv2.threshold(light, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
-
-    gradX = cv2.Sobel(blackhat, ddepth=cv2.CV_32F, dx=1, dy=0, ksize=-1)
-    gradX = np.absolute(gradX)
-    (minVal, maxVal) = (np.min(gradX), np.max(gradX))
-    gradX = 255 * ((gradX - minVal) / (maxVal - minVal))
-    gradX = gradX.astype("uint8")
-    cv2.imshow("Scharr", gradX)
+    gradX = cv2.Sobel(blackhat, ddepth=cv2.CV_32F, dx=1, dy=0)
+    gradY = cv2.Sobel(blackhat, ddepth=cv2.CV_32F, dx=0, dy=1)
+    gradX = cv2.convertScaleAbs(gradX)
+    gradY = cv2.convertScaleAbs(gradY)
+    Sobel = cv2.addWeighted(gradX, 0.5, gradY, 0.5, 0)
+    # gradX = np.absolute(gradX)
+    # (minVal, maxVal) = (np.min(gradX), np.max(gradX))
+    # gradX = 255 * ((gradX - minVal) / (maxVal - minVal))
+    # gradX = gradX.astype("uint8")
+    cv2.imshow("Scharr", Sobel)
 
     gradX = cv2.GaussianBlur(gradX, (13, 13), 0)
     gradX = cv2.morphologyEx(gradX, cv2.MORPH_CLOSE, licenseKern)
@@ -35,6 +35,11 @@ def main():
     thresh = cv2.dilate(thresh, None, iterations=2)
     thresh = cv2.erode(thresh, None, iterations=2)
     cv2.imshow("Grad Erode/Dilate", thresh)
+
+    squareKern = cv2.getStructuringElement(cv2.MORPH_RECT, (21, 21))
+    light = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, squareKern)
+    light = cv2.threshold(light, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+    cv2.imshow("Light Regions", light)
 
     thresh = cv2.bitwise_and(thresh, thresh, mask=light)
     thresh = cv2.dilate(thresh, None, iterations=2)
@@ -48,16 +53,13 @@ def main():
         peri = cv2.arcLength(c, True)
         approx = cv2.approxPolyDP(c, 0.04 * peri, True)
 
-        rect = cv2.minAreaRect(c)
-        if rect[1][0] == 0 or rect[1][1] == 0:
-            continue
-        ar = rect[1][0] / rect[1][1] if rect[1][0] / rect[1][1] > 1.0 else rect[1][1] / rect[1][0]
         # box = cv2.boxPoints(rect)
         # box = np.int0(box)
         area = cv2.contourArea(c)
         x, y, w, h = cv2.boundingRect(c)
-        if len(approx) == 4 and area > 1000:
-            print(f"area: {area}, ar: {ar}")
+        ar = w / h * 1.0
+        if 4 <= len(approx) <= 5 and ar > 2 and area > 1000:
+            print(f"area: {area}, ar: {ar}, len:{len(approx)}")
 
             results = ocr.ocr(img=img[y : y + h, x : x + w])
             print(results)
