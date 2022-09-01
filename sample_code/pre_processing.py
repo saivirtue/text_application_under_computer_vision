@@ -12,14 +12,13 @@ def main():
     img = cv2.imread(args["image"])
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    licenseKern = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 1))
+    licenseKern = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 5))
     blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, licenseKern)
     cv2.imshow("Blackhat", blackhat)
 
-    squareKern = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    squareKern = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
     light = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, squareKern)
     light = cv2.threshold(light, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
-    cv2.imshow("Light Regions", light)
 
     gradX = cv2.Sobel(blackhat, ddepth=cv2.CV_32F, dx=1, dy=0, ksize=-1)
     gradX = np.absolute(gradX)
