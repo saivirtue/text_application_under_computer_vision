@@ -16,7 +16,7 @@ def main():
     blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, licenseKern)
     cv2.imshow("Blackhat", blackhat)
 
-    squareKern = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+    squareKern = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     light = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, squareKern)
     light = cv2.threshold(light, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
 
