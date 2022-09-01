@@ -21,16 +21,14 @@ def main():
     gradX = cv2.convertScaleAbs(gradX)
     gradY = cv2.convertScaleAbs(gradY)
     Sobel = cv2.addWeighted(gradX, 0.5, gradY, 0.5, 0)
-    # gradX = np.absolute(gradX)
-    # (minVal, maxVal) = (np.min(gradX), np.max(gradX))
-    # gradX = 255 * ((gradX - minVal) / (maxVal - minVal))
-    # gradX = gradX.astype("uint8")
-    cv2.imshow("Scharr", Sobel)
+    cv2.imshow("Sobel", Sobel)
 
-    Sobel = cv2.GaussianBlur(Sobel, (13, 13), 0)
+    Sobel = cv2.GaussianBlur(Sobel, (15, 15), 0)
     Sobel = cv2.morphologyEx(Sobel, cv2.MORPH_CLOSE, licenseKern)
     thresh = cv2.threshold(Sobel, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
     cv2.imshow("Grad Thresh", thresh)
+    cv2.waitKey(0)
+    exit(0)
 
     thresh = cv2.dilate(thresh, None, iterations=2)
     thresh = cv2.erode(thresh, None, iterations=2)
