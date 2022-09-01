@@ -27,9 +27,9 @@ def main():
     # gradX = gradX.astype("uint8")
     cv2.imshow("Scharr", Sobel)
 
-    gradX = cv2.GaussianBlur(gradX, (13, 13), 0)
-    gradX = cv2.morphologyEx(gradX, cv2.MORPH_CLOSE, licenseKern)
-    thresh = cv2.threshold(gradX, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+    Sobel = cv2.GaussianBlur(Sobel, (13, 13), 0)
+    Sobel = cv2.morphologyEx(Sobel, cv2.MORPH_CLOSE, licenseKern)
+    thresh = cv2.threshold(Sobel, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
     cv2.imshow("Grad Thresh", thresh)
 
     thresh = cv2.dilate(thresh, None, iterations=2)
