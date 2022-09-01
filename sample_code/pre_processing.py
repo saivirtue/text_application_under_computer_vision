@@ -15,9 +15,6 @@ def main():
     licenseKern = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 1))
     blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, licenseKern)
     cv2.imshow("Blackhat", blackhat)
-    cv2.imwrite("imgs/pre_processing_4_c.png", blackhat)
-    cv2.IMREAD
-    exit(0)
 
     squareKern = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     light = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, squareKern)
