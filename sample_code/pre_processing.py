@@ -25,7 +25,7 @@ def main():
 
     Sobel = cv2.GaussianBlur(Sobel, (15, 15), 0)
     Sobel = cv2.morphologyEx(Sobel, cv2.MORPH_CLOSE, licenseKern)
-    thresh = cv2.threshold(Sobel, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+    thresh = cv2.threshold(Sobel, 127, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
     cv2.imshow("Grad Thresh", thresh)
     cv2.waitKey(0)
     exit(0)
