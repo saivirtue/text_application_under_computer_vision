@@ -65,9 +65,16 @@ def main():
     cv2.waitKey(0)
 
     # 找出白色區塊的輪廓，再由面積大到小排序
-    cnts = cv2.findContours(final.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cv2.findContours(final.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_TC89_L1)
     cnts = imutils.grab_contours(cnts)
     cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
+    import numpy as np
+
+    gg = np.dstack([final, final, final])
+    cv2.drawContours(gg, cnts, -1, (0, 0, 255), 3)
+    cv2.imshow("Contours", gg)
+    cv2.waitKey(0)
+    exit(0)
     for c in cnts:
         peri = cv2.arcLength(c, True)
         approx = cv2.approxPolyDP(c, 0.04 * peri, True)
