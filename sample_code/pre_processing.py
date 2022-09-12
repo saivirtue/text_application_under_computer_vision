@@ -61,6 +61,7 @@ def main():
 
     # 以前一步驟的結果作為遮罩，與前面第一段的結果作AND操作來得到最後結果
     final = cv2.bitwise_and(thresh, thresh, mask=light)
+    final = cv2.dilate(final, None, iterations=2)
     cv2.imshow("Final", final)
     cv2.waitKey(0)
 
@@ -69,23 +70,31 @@ def main():
     cnts = imutils.grab_contours(cnts)
     cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
     for c in cnts:
+        # 用多邊形近似形狀來看輪廓是否為矩形
         peri = cv2.arcLength(c, True)
         approx = cv2.approxPolyDP(c, 0.04 * peri, True)
 
-        # box = cv2.boxPoints(rect)
-        # box = np.int0(box)
+        # 計算輪廓內面積
         area = cv2.contourArea(c)
+        # 取出寬高比
         x, y, w, h = cv2.boundingRect(c)
         ar = w / h * 1.0
+        # 藝術開始：區塊必須為"四邊形或五邊形" 且 "寬高比大於2" 且 "面積大於1000"
         if 4 <= len(approx) <= 5 and ar > 2 and area > 1000:
             print(f"area: {area}, ar: {ar}, len:{len(approx)}")
 
             results = ocr.ocr(img=img[y : y + h, x : x + w])
-            print(results)
-            # cv2.drawContours(img, [c], 0, (255, 0, 255), 2)
+            if len(results) > 0:
+                line_result = results[0]
+                text = line_result[1][0]
+                score = line_result[1][1]
+                cv2.putText(
+                    img, f"{text}({int(score * 100)}%)", (x, y - 10), cv2.FONT_HERSHEY_COMPLEX, 1.0, (0, 255, 0), 2
+                )
             cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 255), 2)
 
     cv2.imshow("img", img)
+    cv2.imwrite("imgs/post_2.png", img)
     cv2.waitKey(0)
 
 
