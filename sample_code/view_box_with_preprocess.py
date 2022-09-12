@@ -93,8 +93,7 @@ def main():
                 )
             cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 255), 2)
 
-    cv2.imshow("img", img)
-    cv2.imwrite("imgs/post_2.png", img)
+    cv2.imshow("OCR Result", img)
     cv2.waitKey(0)
 
 
