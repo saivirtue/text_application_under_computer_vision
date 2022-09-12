@@ -64,6 +64,7 @@ def main():
     cv2.imshow("Final", final)
     cv2.waitKey(0)
 
+    # 找出白色區塊的輪廓，再由面積大到小排序
     cnts = cv2.findContours(final.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
     cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
